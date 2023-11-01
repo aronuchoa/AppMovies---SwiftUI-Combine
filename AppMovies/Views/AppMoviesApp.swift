@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct AppMoviesApp: App {
+    let viewModel = MovieListViewModel(moviesFetcher: MoviesAPI())
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MoviewView(viewModel: viewModel)
         }
     }
 }
