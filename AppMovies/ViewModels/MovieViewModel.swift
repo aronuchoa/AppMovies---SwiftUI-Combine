@@ -12,10 +12,12 @@ protocol MovieListViewModelInterface: ObservableObject {
     var movieList: [Movie] { get set }
     init(moviesFetcher: MoviesFetchable)
     func fetchMovieList()
+    func shouldLoadData(movie: Movie) -> Bool
 }
 
 class MovieListViewModel {
     @Published var movieList: [Movie]
+    @Published var currentPage: String = "1"
     private let moviesFetcher: MoviesFetchable
     private var disposables = Set<AnyCancellable>()
 
@@ -30,7 +32,7 @@ class MovieListViewModel {
 extension MovieListViewModel: MovieListViewModelInterface {
     func fetchMovieList() {
         moviesFetcher
-            .fetchMoviesList()
+            .fetchMoviesList(page: self.currentPage)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] value in
                 switch value {
@@ -40,10 +42,15 @@ extension MovieListViewModel: MovieListViewModelInterface {
                     break
                 }
             } receiveValue: { [weak self] moviesResponse in
-                if let movies = moviesResponse.results {
-                    self?.movieList = movies
+                if let movies = moviesResponse.results, let page = moviesResponse.page {
+                    self?.movieList.append(contentsOf: movies)
+                    self?.currentPage = String(page + 1)
                 }
             }
             .store(in: &disposables)
+    }
+    
+    func shouldLoadData(movie: Movie) -> Bool {
+        return movie == self.movieList.last
     }
 }

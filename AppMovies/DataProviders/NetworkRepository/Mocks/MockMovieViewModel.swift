@@ -19,4 +19,6 @@ class MockMovieViewModel: MovieListViewModelInterface {
         ]
     }
     func fetchMovieList() {  }
+    
+    func shouldLoadData(movie: Movie) -> Bool { return true }
 }

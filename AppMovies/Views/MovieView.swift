@@ -20,6 +20,7 @@ struct MoviewView<Model>: View where Model:MovieListViewModelInterface {
             }
             .onAppear() {
                 viewModel.fetchMovieList()
+                print("entrou")
             }
         }
     }
@@ -30,6 +31,12 @@ struct MoviewView<Model>: View where Model:MovieListViewModelInterface {
                 HStack {
                     Text("\(movie.title)")
                     Spacer()
+                }
+            }
+            .onAppear {
+                if viewModel.shouldLoadData(movie: movie) {
+                    viewModel.fetchMovieList()
+                    print("update list")
                 }
             }
         }

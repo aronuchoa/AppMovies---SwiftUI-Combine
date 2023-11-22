@@ -9,7 +9,7 @@ import Foundation
 import Combine
 
 protocol MoviesFetchable {
-    func fetchMoviesList() -> AnyPublisher<UpcomingResult, APIError>
+    func fetchMoviesList(page: String) -> AnyPublisher<UpcomingResult, APIError>
 }
 
 class MoviesAPI {
@@ -26,21 +26,21 @@ private extension MoviesAPI {
         static let path = "/3/movie/upcoming"
     }
     
-    func urlComponentForMoviesList() -> URLComponents {
+    func urlComponentForMoviesList(page: String) -> URLComponents {
         var components = URLComponents()
         components.scheme = MoviesAPIComponent.scheme
         components.host = MoviesAPIComponent.host
         components.path = MoviesAPIComponent.path
         components.queryItems = [
           URLQueryItem(name: "language", value: "en-US"),
-          URLQueryItem(name: "page", value: "1")
+          URLQueryItem(name: "page", value: page)
         ]
         return components
     }
 }
 
 extension MoviesAPI: MoviesFetchable, Fetchable {
-    func fetchMoviesList() -> AnyPublisher<UpcomingResult, APIError> {
-        return fetch(with: self.urlComponentForMoviesList(), session: self.session)
+    func fetchMoviesList(page: String) -> AnyPublisher<UpcomingResult, APIError> {
+        return fetch(with: self.urlComponentForMoviesList(page: page), session: self.session)
     }
 }
